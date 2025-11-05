@@ -1,21 +1,37 @@
 # Wireframes
 
-Reference the Creating an Entity Relationship Diagram final project guide in the course portal for more information about how to complete this deliverable.
-
 ## List of Pages
 
-[👉🏾👉🏾👉🏾 List the pages you expect to have in your app, with a ⭐ next to pages you have wireframed]
+⭐ Home Page (Product Listings)
+⭐ Product Detail Page
+⭐ Shopping Cart
+⭐ Checkout Page
+- Login/Signup Page
+- User Profile Page
+- Order History Page
+- Admin Dashboard (stretch)
 
-## Wireframe 1: [page title]
 
-[👉🏾👉🏾👉🏾 include wireframe 1]
 
-## Wireframe 2: [page title]
+## User Flow Diagram
 
-[👉🏾👉🏾👉🏾 include wireframe 2]
+![User Flow Diagram](assets/User_Flow.png)
 
-## Wireframe 3: [page title]
+This diagram shows the complete user journey through the EZBuy application, from browsing products on the home page, viewing product details, adding items to the shopping cart, and completing the checkout process.
 
-[👉🏾👉🏾👉🏾 include wireframe 3]
 
-[👉🏾👉🏾👉🏾 include more wireframes as desired]
+## Wireframe 1: Home Page
+
+![Home Page Wireframe](assets/Home_Page.png)
+
+## Wireframe 2: Product Detail Page
+
+![Product Detail Wireframe](assets/Product_Detail.png)
+
+## Wireframe 3: Shopping Cart
+
+![Shopping Cart Wireframe](assets/Shopping_Cart.png)
+
+## Wireframe 4: Checkout Page
+
+![Checkout Wireframe](assets/Checkout.png)

@@ -26,4 +26,4 @@ We went back and forth a lot on how ambitious to make the feature list. The stud
 
 ### 3. What additional support will you need in upcoming units as you continue to work on your final project?
 
-We've never integrated Stripe for payments before, so that's definitely going to need some guidance. Also not sure how complicated the authentication with Firebase or GitHub OAuth will be. The cart persistence thing might be tricky too - keeping track of items when users aren't logged in versus when they are. Basically we'll need help when we hit roadblocks with the new technologies and probably some debugging help when things inevitably break.
+We've never integrated Stripe for payments before, so that's definitely going to need some guidance.  
