@@ -1,8 +1,10 @@
-# JobTrackr
+# EZBuy
 
 CodePath WEB103 Final Project
 
-Designed and developed by: Abdessamad Ballaj, Abdul Wakil Najibi, Gulzira Abdullah
+**Designed and developed by:** Abdessamad Ballaj, Abdul Wakil Najibi, Gulzira Abdullah
+
+
 
 🔗 Link to deployed app: (will be added after deployment)
 
@@ -10,51 +12,73 @@ Designed and developed by: Abdessamad Ballaj, Abdul Wakil Najibi, Gulzira Abdull
 
 ### Description and Purpose
 
-JobTrackr is a full-stack web application that helps job seekers manage their internship and job applications in one centralized platform. Users can track companies, manage applications with different resume versions, monitor interview stages, and set follow-up reminders. The app features a dashboard with analytics and insights to help users understand their job search progress and improve their application strategy.
+EZBuy is a modern, full-stack ecommerce platform designed for everyday shopping needs. The application provides a clean and intuitive interface for users to browse products, manage their shopping cart, and complete secure purchases. Built with a focus on simplicity and user experience, EZBuy streamlines the online shopping process while offering features like student discounts, order tracking, and personalized recommendations.
 
 ### Inspiration
 
-Last semester during internship recruiting, I applied to over 40 companies and quickly lost track of everything in a messy Excel spreadsheet. I would forget to update statuses, miss follow-up deadlines, and couldn't remember if I had already applied to a company when I saw the same position reposted. After talking with my teammates, we realized we all had the same problem - some were using Google Sheets, others had notes scattered across different apps, and one of us was keeping a paper notebook that kept getting lost. We tried existing tools but found them either too complicated, locked behind paywalls, or they only worked as Chrome extensions. We wanted something simple, mobile-friendly, and free. As students who just learned full-stack development, we realized we could build exactly what we needed. That shared frustration became JobTrackr.
+Online shopping has become essential in our daily lives, yet many ecommerce platforms are cluttered with unnecessary features, slow performance, or complicated checkout processes. As students and frequent online shoppers, we noticed the frustration of navigating overly complex websites just to purchase everyday items. We wanted to create a streamlined shopping experience that prioritizes speed, clarity, and user satisfaction. EZBuy was born from our desire to build an ecommerce platform that focuses on what matters most: helping users find what they need quickly and complete their purchases effortlessly. With the addition of student discounts, we're also addressing the financial challenges faced by our peers in the student community.
 
 ## Tech Stack
 
-Frontend: React, React Router, Tailwind CSS
+**Frontend:** React (Vite), React Router, Tailwind CSS
 
-Backend: Node.js, Express, PostgreSQL
+**Backend:** Node.js, Express, PostgreSQL
+
+**Authentication:** Firebase Auth / GitHub OAuth
+
+**Payments:** Stripe API
+
+**Deployment:** Render
 
 ## Features
 
-### Company Management
+### Product Catalog & Browse
 
-Save and organize companies you're interested in with details like industry, location, and website. View all your applications to each company in one place.
+Browse a comprehensive catalog of everyday products with clear images, descriptions, and pricing. Products are organized into intuitive categories for easy navigation and discovery.
 
-### Application Tracking with Resume Versioning
+### Product Detail Views
 
-Track every application with full details including position, description, date applied, status, and salary expectations. Link each application to a specific resume version to see which one performs best.
+View detailed product information including high-quality images, full descriptions, specifications, pricing, and availability. Make informed purchasing decisions with all the information you need in one place.
 
-### Resume Library
+### Shopping Cart Management
 
-Store multiple resume versions with custom names and track which resume you used for each application. Analyze performance to see which resume gets more responses.
+Add, remove, and update product quantities in your shopping cart. View real-time cart totals and proceed to checkout seamlessly with a persistent cart that saves your selections.
 
-### Interview Management
+### Secure Checkout with Stripe
 
-Log interview rounds with details like date, type, interviewer name, and notes. Track your progress through multiple interview stages for each application.
+Complete purchases securely using Stripe payment integration. Process payments safely with industry-standard security and receive instant order confirmation.
 
-### Analytics Dashboard
+### User Authentication
 
-View key metrics including total applications, response rates, interview conversion rates, and resume performance. Visualize your job search progress with charts and insights.
+Register and sign in using Firebase Authentication or GitHub OAuth. Maintain a personalized shopping experience with secure account management and session handling.
 
-### Smart Filtering and Sorting
+### Order History & Tracking
 
-Filter applications by status, company, or date. Sort by various criteria to quickly find what you need and prioritize follow-ups.
+View your complete purchase history with details about past orders, including items purchased, order dates, and total amounts. Track your orders and revisit previous purchases easily.
 
-### Follow-Up Reminders
+### Student Discount Program
 
-Set reminder dates for follow-ups and next actions. Track what needs your attention so nothing falls through the cracks.
+Students can register using their .edu email address to access exclusive discounts on eligible products. Verified student accounts automatically display discounted pricing throughout the shopping experience.
 
-### Quick Status Updates
+### Toast Notifications
 
-Update application status through a modal dialog without leaving the page. Keep your tracker current with minimal navigation.
+Receive instant feedback for user actions with sleek toast notifications. Stay informed when items are added to cart, orders are placed, or errors occur, enhancing the overall user experience.
+
+### Search & Filter Products *(Stretch)*
+
+Quickly find specific products using the search functionality and filter results by category, price range, or other criteria to narrow down your options efficiently.
+
+### Product Sorting *(Stretch)*
+
+Sort products by price (low to high, high to low), popularity, newest arrivals, or other relevant criteria to browse more effectively and find exactly what you're looking for.
+
+### Admin Dashboard *(Stretch)*
+
+Administrators can manage the product inventory through a dedicated dashboard, including adding new products, editing existing items, updating stock levels, and removing discontinued products.
+
+### Wishlist / Save for Later *(Stretch)*
+
+Save products you're interested in to a wishlist for future reference. Easily access and manage saved items and move them to your cart when ready to purchase.
 
 ## Installation Instructions
 
