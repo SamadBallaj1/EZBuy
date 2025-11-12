@@ -1,4 +1,3 @@
-// src/pages/Products.jsx
 import { useState, useEffect } from "react";
 import { getAllProducts } from "../services/productService";
 import ProductCard from "../components/ProductCard";
@@ -7,16 +6,36 @@ import CategorySidebar from "../components/CategorySidebar";
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("All");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setProducts(getAllProducts());
+    const fetchProducts = async () => {
+      try {
+        const data = await getAllProducts();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
-  const categories = ["Electronics", "Books", "Clothing", "Accessories"];
+  const categories = ["Electronics", "Accessories", "Audio"];
   const filtered =
     selectedCategory === "All"
       ? products
-      : products.filter((p) => p.category === selectedCategory);
+      : products.filter((p) => p.category_name === selectedCategory);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8 text-center">
+        <p>Loading products...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">

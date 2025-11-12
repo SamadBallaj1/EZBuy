@@ -1,45 +1,50 @@
-// src/pages/ProductDetail.jsx
 import { useParams } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getProductById } from "../services/productService";
 import { useCart } from "../context/CartContext";
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const product = getProductById(id);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
-  const [mainImage, setMainImage] = useState(product?.images[0]);
-  const [selectedColor, setSelectedColor] = useState(product?.colors[0]);
+  const [mainImage, setMainImage] = useState("");
   const [quantity, setQuantity] = useState(1);
 
-  if (!product) return <p className="text-center mt-10">Product not found.</p>;
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const data = await getProductById(id);
+        setProduct(data);
+        setMainImage(data.image_url);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return <p className="text-center mt-10">Loading product...</p>;
+  }
+
+  if (!product) {
+    return <p className="text-center mt-10">Product not found.</p>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-10 grid md:grid-cols-2 gap-8">
-      {/* Left: Product Images */}
       <div>
         <img
-          src={mainImage}
+          src={product.image_url || 'https://via.placeholder.com/400'}
           alt={product.name}
           className="w-full h-auto rounded-lg shadow-md mb-4"
         />
-
-        <div className="flex gap-3">
-          {product.images.map((img, index) => (
-            <img
-              key={index}
-              src={img}
-              alt={`${product.name} ${index}`}
-              className={`w-20 h-20 object-cover rounded-md cursor-pointer border ${
-                mainImage === img ? "border-blue-500" : "border-gray-300"
-              }`}
-              onClick={() => setMainImage(img)}
-            />
-          ))}
-        </div>
       </div>
 
-      {/* Right: Product Info */}
       <div>
         <h1 className="text-3xl font-bold mb-3">{product.name}</h1>
         <p className="text-gray-600 mb-4">{product.description}</p>
@@ -47,14 +52,13 @@ const ProductDetail = () => {
 
         <div className="mb-6">
           <p className="text-xl font-semibold text-gray-900">
-            ${product.price.toFixed(2)}{" "}
+            ${parseFloat(product.price).toFixed(2)}{" "}
             <span className="text-green-600 text-lg ml-2">
-              Student: ${product.studentPrice.toFixed(2)}
+              Student: ${parseFloat(product.student_price).toFixed(2)}
             </span>
           </p>
         </div>
 
-        {/* Quantity Selector */}
         <div className="mb-6">
           <label className="block font-medium mb-2">Quantity:</label>
           <input
@@ -66,7 +70,6 @@ const ProductDetail = () => {
           />
         </div>
 
-        {/* Add to Cart Button */}
         <button
           className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
           onClick={() => addToCart(product, quantity)}
