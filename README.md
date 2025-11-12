@@ -6,6 +6,8 @@ CodePath WEB103 Final Project
 
 
 
+# EZBuy
+
 🔗 Link to deployed app: (will be added after deployment)
 
 ## About
@@ -32,17 +34,26 @@ Online shopping has become essential in our daily lives, yet many ecommerce plat
 
 ## ✨ Features
 
-### 🛍️ Product Catalog & Browse
+### ✅ 🛍️ Product Catalog & Browse
 
 Browse a comprehensive catalog of everyday products with clear images, descriptions, and pricing. Products are organized into intuitive categories for easy navigation and discovery.
 
-### 🔍 Product Detail Views
+
+![Product Catalog](ezbuy-frontend/public/assets/GIF/EZBuy_Homepage.gif)
+
+![Products Page](ezbuy-frontend/public/assets/GIF/EZBuy_ProductPage.gif)
+
+### ✅ 🔍 Product Detail Views
 
 View detailed product information including high-quality images, full descriptions, specifications, pricing, and availability. Make informed purchasing decisions with all the information you need in one place.
 
-### 🛒 Shopping Cart Management
+![Product Details](ezbuy-frontend/public/assets/GIF/EZBuy_IndividualPage.gif)
+
+### ✅ 🛒 Shopping Cart Management
 
 Add, remove, and update product quantities in your shopping cart. View real-time cart totals and proceed to checkout seamlessly with a persistent cart that saves your selections.
+
+![Shopping Cart](ezbuy-frontend/public/assets/GIF/EZBuy_CartPage.gif)
 
 ### 💳 Secure Checkout with Stripe
 
@@ -60,9 +71,11 @@ View your complete purchase history with details about past orders, including it
 
 Students can register using their .edu email address to access exclusive discounts on eligible products. Verified student accounts automatically display discounted pricing throughout the shopping experience.
 
-### 🔔 Toast Notifications
+### ✅ 🔔 Toast Notifications
 
 Receive instant feedback for user actions with sleek toast notifications. Stay informed when items are added to cart, orders are placed, or errors occur, enhancing the overall user experience.
+
+![Application Demo](ezbuy-frontend/public/assets/GIF/EZBuy_GIF.gif)
 
 ### 🔎 Search & Filter Products *(Stretch)*
 
