@@ -1,3 +1,4 @@
 local/
 *.log
 *.env.local
+node_modules/
