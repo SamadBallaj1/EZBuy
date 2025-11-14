@@ -13,19 +13,19 @@ const CategorySidebar = ({ categories, selected, onSelect }) => {
   };
 
   return (
-    <div className="backdrop-blur-md bg-white/80 border border-white/20 p-6 rounded-2xl shadow-lg">
-      <h2 className="font-bold text-xl mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+    <div className="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
+      <h2 className="font-bold text-xl mb-6 text-gray-900">
         Categories
       </h2>
-      <ul className="space-y-3">
+      <ul className="space-y-2">
         {categories.map((cat) => (
           <li key={cat}>
             <button
               onClick={() => handleCategoryClick(cat)}
               className={`block w-full text-left px-4 py-3 rounded-xl font-medium transition-all ${
                 selected === cat
-                  ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
-                  : "bg-white/60 text-gray-700 hover:bg-white/80"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-gray-50 text-gray-700 hover:bg-gray-100"
               }`}
             >
               {cat}
@@ -37,8 +37,8 @@ const CategorySidebar = ({ categories, selected, onSelect }) => {
             onClick={() => handleCategoryClick("All")}
             className={`block w-full text-left px-4 py-3 rounded-xl font-medium transition-all ${
               selected === "All"
-                ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-md"
-                : "bg-white/60 text-gray-700 hover:bg-white/80"
+                ? "bg-blue-600 text-white shadow-md"
+                : "bg-gray-50 text-gray-700 hover:bg-gray-100"
             }`}
           >
             All Products
