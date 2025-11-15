@@ -1,0 +1,218 @@
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
+export default function MobileMenu() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const categories = [
+    { id: 'electronics', name: 'Electronics', icon: '💻', path: '/products?category=electronics' },
+    { id: 'fashion', name: 'Fashion', icon: '👕', path: '/products?category=fashion' },
+    { id: 'home', name: 'Home & Kitchen', icon: '🏠', path: '/products?category=home' },
+    { id: 'student', name: 'Student Essentials', icon: '📚', path: '/products?category=student' },
+    { id: 'coffee', name: 'Coffee & Drinks', icon: '☕', path: '/products?category=coffee' },
+    { id: 'accessories', name: 'Accessories', icon: '🎧', path: '/products?category=accessories' }
+  ];
+
+  const quickLinks = [
+    { name: 'Home', icon: '🏠', path: '/' },
+    { name: 'All Products', icon: '🛍️', path: '/products' },
+    { name: 'My Cart', icon: '🛒', path: '/cart' },
+    { name: 'Orders', icon: '📦', path: '/orders' },
+    { name: 'Account', icon: '👤', path: '/account' },
+    { name: 'Help & Support', icon: '💬', path: '/support' }
+  ];
+
+  const handleClose = () => setIsOpen(false);
+
+  return (
+    <>
+      {/* Hamburger Button - Only visible on mobile/tablet */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="lg:hidden fixed top-4 left-4 z-50 bg-gradient-to-br from-blue-600 to-purple-600 text-white p-3 rounded-xl shadow-2xl hover:scale-105 transition-transform"
+        aria-label="Toggle menu"
+      >
+        {isOpen ? (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        ) : (
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        )}
+      </button>
+
+      {/* Overlay */}
+      {isOpen && (
+        <div
+          onClick={handleClose}
+          className="lg:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fadeIn"
+        />
+      )}
+
+      {/* Slide-out Menu */}
+      <div
+        className={`lg:hidden fixed top-0 left-0 h-full w-80 max-w-[85vw] bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 shadow-2xl z-50 transform transition-transform duration-300 ease-out ${
+          isOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-white/20 backdrop-blur-sm p-2.5 rounded-xl">
+              <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            </div>
+            <span className="text-2xl font-black text-white">Menu</span>
+          </div>
+          <button
+            onClick={handleClose}
+            className="text-white/80 hover:text-white transition-colors"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Menu Content */}
+        <div className="h-[calc(100%-88px)] overflow-y-auto">
+          {/* Quick Links Section */}
+          <div className="p-4 border-b border-slate-700">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">
+              Quick Access
+            </h3>
+            <div className="space-y-1">
+              {quickLinks.map(link => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={handleClose}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-white/10 transition-all duration-200 group"
+                >
+                  <span className="text-2xl group-hover:scale-110 transition-transform">
+                    {link.icon}
+                  </span>
+                  <span className="font-semibold">{link.name}</span>
+                  <svg className="w-5 h-5 ml-auto text-slate-500 group-hover:text-white group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Categories Section */}
+          <div className="p-4">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3 px-2">
+              Shop by Category
+            </h3>
+            <div className="space-y-1">
+              {categories.map(category => (
+                <Link
+                  key={category.id}
+                  to={category.path}
+                  onClick={handleClose}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-white hover:bg-gradient-to-r hover:from-blue-600/20 hover:to-purple-600/20 transition-all duration-200 group border border-transparent hover:border-blue-500/30"
+                >
+                  <div className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-xl group-hover:bg-gradient-to-br group-hover:from-blue-600 group-hover:to-purple-600 transition-all group-hover:scale-110">
+                    {category.icon}
+                  </div>
+                  <span className="font-semibold">{category.name}</span>
+                  <svg className="w-5 h-5 ml-auto text-slate-500 group-hover:text-blue-400 group-hover:translate-x-1 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Student Discount Banner */}
+          <div className="p-4">
+            <div className="bg-gradient-to-r from-orange-500 to-pink-500 rounded-2xl p-5 text-white shadow-xl">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                  <span className="text-2xl">🎓</span>
+                </div>
+                <div>
+                  <h4 className="font-black text-lg">Student Discounts</h4>
+                  <p className="text-white/90 text-sm">Save up to 30%</p>
+                </div>
+              </div>
+              <p className="text-sm text-white/90 mb-3">
+                Get automatic discounts on all products with your student email.
+              </p>
+              <Link
+                to="/student-verification"
+                onClick={handleClose}
+                className="block w-full bg-white text-orange-600 font-bold py-2.5 px-4 rounded-lg text-center hover:bg-white/90 transition-colors"
+              >
+                Verify Student Status
+              </Link>
+            </div>
+          </div>
+
+          {/* Footer Info */}
+          <div className="p-4 border-t border-slate-700">
+            <div className="space-y-3">
+              <Link
+                to="/about"
+                onClick={handleClose}
+                className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                About EzBuy
+              </Link>
+              <Link
+                to="/contact"
+                onClick={handleClose}
+                className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+                Contact Us
+              </Link>
+              <Link
+                to="/help"
+                onClick={handleClose}
+                className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors text-sm"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Help Center
+              </Link>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-slate-700 text-center">
+              <p className="text-xs text-slate-500">
+                © 2025 EzBuy. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add these animations to your CSS file */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        .animate-fadeIn {
+          animation: fadeIn 0.2s ease-out;
+        }
+      `}</style>
+    </>
+  );
+}
