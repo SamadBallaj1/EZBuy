@@ -23,7 +23,7 @@ const Home = () => {
     fetchProducts();
   }, []);
 
-  const categories = ["All", "Electronics", "Accessories", "Audio"];
+  const categories = ["All", "Electronics", "Accessories", "Audio", "Fashion", "Home & Kitchen", "Coffee & Drinks", "Student Essentials"];
   
   const filteredProducts = selectedCategory === "All" 
     ? allProducts 

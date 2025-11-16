@@ -52,10 +52,10 @@ export default function ProductsPage() {
         'electronics': 1,
         'accessories': 2,
         'audio': 3,
-        'fashion': 2,
-        'home': 2,
-        'student': 2,
-        'coffee': 2
+        'fashion': 4,
+        'home': 5,
+        'coffee': 6,
+        'student': 7
       };
       const categoryId = categoryMap[categoryFilter];
       if (categoryId) {
