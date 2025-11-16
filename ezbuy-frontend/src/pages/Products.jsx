@@ -25,7 +25,7 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/products');
+      const response = await fetch('http://localhost:3001/api/products'); // FIXED: Changed from 3000 to 3001
       const data = await response.json();
       console.log('Fetched products:', data);
       setProducts(data);
