@@ -1,0 +1,54 @@
+import pkg from 'pg';
+const { Pool } = pkg;
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
+
+const categories = [
+  { id: 1, name: 'Electronics', description: 'Laptops, tablets, monitors, and tech essentials' },
+  { id: 2, name: 'Accessories', description: 'Mice, keyboards, cables, and desk accessories' },
+  { id: 3, name: 'Audio', description: 'Headphones, earbuds, speakers, and microphones' },
+  { id: 4, name: 'Fashion', description: 'Blue light glasses, hoodies, and bags' },
+  { id: 5, name: 'Home & Kitchen', description: 'Desk lamps, organizers, and home essentials' },
+  { id: 6, name: 'Coffee & Drinks', description: 'Mugs, kettles, and water bottles' },
+  { id: 7, name: 'Student Essentials', description: 'Notebooks, planners, and study tools' }
+];
+
+async function seedCategories() {
+  const client = await pool.connect();
+  
+  try {
+    await client.query('BEGIN');
+    
+    console.log('🗂️  Seeding categories...');
+    
+    for (const category of categories) {
+      await client.query(`
+        INSERT INTO categories (id, name, description)
+        VALUES ($1, $2, $3)
+        ON CONFLICT (id) DO UPDATE 
+        SET name = EXCLUDED.name, description = EXCLUDED.description
+      `, [category.id, category.name, category.description]);
+    }
+    
+    await client.query('COMMIT');
+    console.log(`✅ Successfully seeded ${categories.length} categories!`);
+    categories.forEach(cat => {
+      console.log(`   - ${cat.name}`);
+    });
+    
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('❌ Error seeding categories:', error);
+  } finally {
+    client.release();
+    await pool.end();
+  }
+}
+
+seedCategories();
