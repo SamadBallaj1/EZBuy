@@ -64,22 +64,22 @@ export default function ProductsPage() {
     }
 
     filtered = filtered.filter(product => {
-      const price = showStudentPrice ? product.student_price : product.price;
+      const price = showStudentPrice ? parseFloat(product.student_price) : parseFloat(product.price);
       return price >= priceRange[0] && price <= priceRange[1];
     });
 
     switch (sortBy) {
       case 'price-low':
         filtered.sort((a, b) => {
-          const priceA = showStudentPrice ? a.student_price : a.price;
-          const priceB = showStudentPrice ? b.student_price : b.price;
+          const priceA = showStudentPrice ? parseFloat(a.student_price) : parseFloat(a.price);
+          const priceB = showStudentPrice ? parseFloat(b.student_price) : parseFloat(b.price);
           return priceA - priceB;
         });
         break;
       case 'price-high':
         filtered.sort((a, b) => {
-          const priceA = showStudentPrice ? a.student_price : a.price;
-          const priceB = showStudentPrice ? b.student_price : b.price;
+          const priceA = showStudentPrice ? parseFloat(a.student_price) : parseFloat(a.price);
+          const priceB = showStudentPrice ? parseFloat(b.student_price) : parseFloat(b.price);
           return priceB - priceA;
         });
         break;
@@ -88,8 +88,8 @@ export default function ProductsPage() {
         break;
       case 'discount':
         filtered.sort((a, b) => {
-          const discountA = ((a.price - a.student_price) / a.price) * 100;
-          const discountB = ((b.price - b.student_price) / b.price) * 100;
+          const discountA = ((parseFloat(a.price) - parseFloat(a.student_price)) / parseFloat(a.price)) * 100;
+          const discountB = ((parseFloat(b.price) - parseFloat(b.student_price)) / parseFloat(b.price)) * 100;
           return discountB - discountA;
         });
         break;
@@ -101,7 +101,7 @@ export default function ProductsPage() {
   };
 
   const calculateDiscount = (regular, student) => {
-    return Math.round(((regular - student) / regular) * 100);
+    return Math.round(((parseFloat(regular) - parseFloat(student)) / parseFloat(regular)) * 100);
   };
 
   if (loading) {
@@ -260,10 +260,10 @@ export default function ProductsPage() {
                       <div>
                         <div className="flex items-baseline gap-2">
                           <span className="text-2xl font-black text-blue-600">
-                            ${product.student_price.toFixed(2)}
+                            ${parseFloat(product.student_price).toFixed(2)}
                           </span>
                           <span className="text-sm text-gray-400 line-through">
-                            ${product.price.toFixed(2)}
+                            ${parseFloat(product.price).toFixed(2)}
                           </span>
                         </div>
                         <p className="text-xs text-green-600 font-semibold">
@@ -273,10 +273,10 @@ export default function ProductsPage() {
                     ) : (
                       <div>
                         <span className="text-2xl font-black text-gray-900">
-                          ${product.price.toFixed(2)}
+                          ${parseFloat(product.price).toFixed(2)}
                         </span>
                         <p className="text-xs text-gray-500 font-medium">
-                          ${product.student_price.toFixed(2)} with student discount
+                          ${parseFloat(product.student_price).toFixed(2)} with student discount
                         </p>
                       </div>
                     )}
