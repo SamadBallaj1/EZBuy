@@ -19,7 +19,7 @@ export default function Login() {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/login`, {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user.email })
@@ -28,7 +28,9 @@ export default function Login() {
       if (response.ok) {
         const userData = await response.json();
         localStorage.setItem('user', JSON.stringify(userData));
-        navigate('/');
+        window.location.href = '/';
+      } else {
+        setError('Failed to login. Please try again.');
       }
     } catch (err) {
       setError(err.message);
@@ -46,7 +48,7 @@ export default function Login() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/login`, {
+      const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: user.email })
@@ -55,7 +57,7 @@ export default function Login() {
       if (response.ok) {
         const userData = await response.json();
         localStorage.setItem('user', JSON.stringify(userData));
-        navigate('/');
+        window.location.href = '/';
       } else {
         navigate('/register');
       }

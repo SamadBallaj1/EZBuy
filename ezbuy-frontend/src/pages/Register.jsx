@@ -24,7 +24,7 @@ export default function Register() {
 
       const isStudent = isStudentEmail(email);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/register`, {
+      const response = await fetch('http://localhost:3001/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -37,7 +37,7 @@ export default function Register() {
       if (response.ok) {
         const userData = await response.json();
         localStorage.setItem('user', JSON.stringify(userData));
-        navigate('/');
+        window.location.href = '/';
       } else {
         const data = await response.json();
         setError(data.error || 'Registration failed');
@@ -60,7 +60,7 @@ export default function Register() {
 
       const isStudent = isStudentEmail(user.email);
 
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/auth/register`, {
+      const response = await fetch('http://localhost:3001/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -73,7 +73,7 @@ export default function Register() {
       if (response.ok) {
         const userData = await response.json();
         localStorage.setItem('user', JSON.stringify(userData));
-        navigate('/');
+        window.location.href = '/';
       } else {
         const data = await response.json();
         if (data.error === 'User already exists') {
