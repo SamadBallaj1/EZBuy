@@ -1,8 +1,17 @@
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useState } from "react";
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
+
+  const handleAddToCart = async () => {
+    setIsAdding(true);
+    await new Promise(resolve => setTimeout(resolve, 300));
+    addToCart(product);
+    setIsAdding(false);
+  };
 
   return (
     <div className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100">
@@ -48,10 +57,23 @@ const ProductCard = ({ product }) => {
             View
           </Link>
           <button
-            onClick={() => addToCart(product)}
-            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 text-sm"
+            onClick={handleAddToCart}
+            disabled={isAdding}
+            className={`flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-semibold transition-all duration-200 text-sm flex items-center justify-center gap-2 ${
+              isAdding ? 'opacity-75 cursor-not-allowed' : ''
+            }`}
           >
-            Add to Cart
+            {isAdding ? (
+              <>
+                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Adding...
+              </>
+            ) : (
+              'Add to Cart'
+            )}
           </button>
         </div>
       </div>
