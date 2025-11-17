@@ -90,233 +90,203 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="bg-gradient-to-r from-slate-800 via-slate-700 to-slate-800 text-white shadow-2xl sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 py-3">
-          <div className="flex items-center gap-6">
-            <Link to="/" className="flex items-center gap-2 flex-shrink-0 group">
-              <img 
-                src="/assets/logo.png" 
-                alt="EzBuy Logo" 
-                className="w-10 h-10 group-hover:scale-105 transition-transform"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.nextElementSibling.style.display = 'flex';
-                }}
-              />
-              <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-2 rounded-xl shadow-lg group-hover:shadow-blue-500/50 transition-all duration-300 group-hover:scale-105" style={{display: 'none'}}>
-                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-              </div>
-              <span className="text-2xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                EzBuy
-              </span>
-            </Link>
-
-            <div ref={searchRef} className="flex-1 max-w-3xl relative">
-              <div className="flex items-center bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
-                <div className="relative">
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="bg-gray-50 text-gray-700 px-4 py-3.5 pr-8 font-medium cursor-pointer border-r border-gray-200 focus:outline-none focus:bg-gray-100 transition-colors appearance-none"
-                    style={{ minWidth: '160px' }}
-                  >
-                    {categories.map(cat => (
-                      <option key={cat.id} value={cat.id}>
-                        {cat.icon} {cat.name}
-                      </option>
-                    ))}
-                  </select>
-                  <svg className="w-4 h-4 text-gray-500 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => {
-                    setSearchQuery(e.target.value);
-                    setShowSuggestions(true);
+      <nav className="sticky top-0 z-50">
+        <div className="relative bg-slate-950 border-b border-slate-800/50">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-purple-600/5 to-pink-600/5"></div>
+          
+          <div className="relative max-w-7xl mx-auto px-6 py-5">
+            <div className="flex items-center justify-between gap-8 mb-6">
+              
+              <Link to="/" className="flex items-center gap-3 group">
+                <img 
+                  src="/assets/logo.png" 
+                  alt="EzBuy Logo" 
+                  className="w-11 h-11 group-hover:scale-110 transition-transform duration-300"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                    e.target.nextElementSibling.style.display = 'flex';
                   }}
-                  onFocus={() => setShowSuggestions(true)}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  placeholder="Search for products, brands, and more..."
-                  className="flex-1 px-4 py-3.5 text-gray-800 placeholder-gray-400 focus:outline-none text-sm"
                 />
-
-                {searchQuery && (
-                  <button
-                    onClick={() => {
-                      setSearchQuery('');
-                      setSuggestions([]);
-                    }}
-                    className="px-3 text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
-
-                <button
-                  onClick={() => handleSearch()}
-                  className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-8 py-3.5 font-bold hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-lg hover:shadow-xl"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                <div className="bg-gradient-to-br from-blue-500 to-purple-600 p-2.5 rounded-xl shadow-lg group-hover:shadow-blue-500/50 transition-all duration-300 group-hover:scale-105" style={{display: 'none'}}>
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   </svg>
-                </button>
+                </div>
+                <div>
+                  <span className="text-2xl font-black bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                    EzBuy
+                  </span>
+                  <p className="text-[9px] text-slate-500 font-bold tracking-widest -mt-1">STUDENT DEALS</p>
+                </div>
+              </Link>
+
+              <div ref={searchRef} className="flex-1 max-w-2xl">
+                <div className="relative">
+                  <div className="absolute -inset-1 bg-white/10 rounded-full blur-lg"></div>
+                  <div className="relative bg-white rounded-full shadow-2xl overflow-hidden border border-slate-200/50">
+                    <div className="flex items-center">
+                      
+                      <div className="relative pl-6 pr-4 border-r border-slate-200">
+                        <select
+                          value={selectedCategory}
+                          onChange={(e) => setSelectedCategory(e.target.value)}
+                          className="bg-transparent text-slate-900 font-bold cursor-pointer focus:outline-none appearance-none pr-8 py-4"
+                        >
+                          {categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.icon} {cat.name}</option>
+                          ))}
+                        </select>
+                        <svg className="w-4 h-4 text-slate-600 absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </div>
+
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => {
+                          setSearchQuery(e.target.value);
+                          setShowSuggestions(true);
+                        }}
+                        onFocus={() => setShowSuggestions(true)}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                        placeholder="What do you need today?"
+                        className="flex-1 px-6 py-4 text-slate-900 placeholder-slate-400 focus:outline-none font-semibold bg-transparent"
+                      />
+
+                      {searchQuery && (
+                        <button onClick={() => { setSearchQuery(''); setSuggestions([]); }} className="px-3 text-slate-400 hover:text-slate-700">
+                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                          </svg>
+                        </button>
+                      )}
+
+                      <button onClick={() => handleSearch()} className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-full m-1.5 px-8 py-3 font-black transition-all duration-300 shadow-lg">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {showSuggestions && (searchQuery || recentSearches.length > 0) && (
+                  <div className="absolute top-full mt-3 w-full bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-fadeIn">
+                    {recentSearches.length > 0 && !searchQuery && (
+                      <div className="p-5 border-b border-slate-100">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs font-black text-slate-600 uppercase tracking-wider">Recent</span>
+                          <button onClick={clearRecentSearches} className="text-xs text-orange-600 hover:text-orange-800 font-black">Clear</button>
+                        </div>
+                        {recentSearches.map((term, idx) => (
+                          <button key={idx} onClick={() => { setSearchQuery(term); handleSearch(term); }} className="w-full text-left px-4 py-3 hover:bg-slate-50 rounded-xl flex items-center gap-3 mb-1 group">
+                            <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-orange-100">
+                              <svg className="w-4 h-4 text-slate-500 group-hover:text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                            </div>
+                            <span className="text-slate-800 font-semibold">{term}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {searchQuery && suggestions.length > 0 && (
+                      <div className="p-5">
+                        <span className="text-xs font-black text-slate-600 uppercase tracking-wider block mb-3">Suggestions</span>
+                        {suggestions.map((term, idx) => (
+                          <button key={idx} onClick={() => { setSearchQuery(term); handleSearch(term); }} className="w-full text-left px-4 py-3 hover:bg-slate-50 rounded-xl flex items-center gap-3 mb-1 group">
+                            <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-orange-100">
+                              <svg className="w-4 h-4 text-slate-500 group-hover:text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                              </svg>
+                            </div>
+                            <span className="text-slate-800 font-semibold">{term}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    {searchQuery && suggestions.length === 0 && (
+                      <div className="p-8 text-center">
+                        <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center">
+                          <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                          </svg>
+                        </div>
+                        <p className="text-sm font-bold text-slate-500">No results</p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {showSuggestions && (searchQuery || recentSearches.length > 0) && (
-                <div className="absolute top-full mt-2 w-full bg-white rounded-xl shadow-2xl border border-gray-100 overflow-hidden z-50 max-h-96 overflow-y-auto">
-                  {recentSearches.length > 0 && !searchQuery && (
-                    <div className="p-3 border-b border-gray-100">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Recent</span>
-                        <button
-                          onClick={clearRecentSearches}
-                          className="text-xs text-blue-600 hover:text-blue-800 font-semibold"
-                        >
-                          Clear All
-                        </button>
+              <div className="flex items-center gap-3">
+                <Link to="/account" className="group relative">
+                  <div className="absolute inset-0 bg-white/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="relative w-12 h-12 bg-slate-800/50 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:bg-slate-700/50 transition-all">
+                    <svg className="w-6 h-6 text-slate-300 group-hover:text-white group-hover:scale-110 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                </Link>
+
+                <Link to="/products" className="group relative">
+                  <div className="absolute inset-0 bg-white/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="relative w-12 h-12 bg-slate-800/50 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:bg-slate-700/50 transition-all">
+                    <svg className="w-6 h-6 text-slate-300 group-hover:text-white group-hover:scale-110 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+                    </svg>
+                  </div>
+                </Link>
+
+                <Link to="/cart" className="group relative">
+                  <div className="absolute inset-0 bg-white/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="relative w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all shadow-lg">
+                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    {cartItems.length > 0 && (
+                      <div className="absolute -top-1.5 -right-1.5 bg-white text-orange-600 text-xs font-black rounded-full min-w-[20px] h-5 flex items-center justify-center px-1.5 shadow-lg border-2 border-slate-950">
+                        {cartItems.length}
                       </div>
-                      {recentSearches.map((term, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => {
-                            setSearchQuery(term);
-                            handleSearch(term);
-                          }}
-                          className="w-full text-left px-3 py-2.5 hover:bg-gray-50 rounded-lg flex items-center gap-3 group transition-colors"
-                        >
-                          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          <span className="text-gray-700 text-sm">{term}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                    )}
+                  </div>
+                </Link>
 
-                  {searchQuery && suggestions.length > 0 && (
-                    <div className="p-3">
-                      <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-2">Suggestions</span>
-                      {suggestions.map((term, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => {
-                            setSearchQuery(term);
-                            handleSearch(term);
-                          }}
-                          className="w-full text-left px-3 py-2.5 hover:bg-blue-50 rounded-lg flex items-center gap-3 group transition-colors"
-                        >
-                          <svg className="w-4 h-4 text-gray-400 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                          </svg>
-                          <span className="text-gray-700 text-sm font-medium">{term}</span>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-
-                  {searchQuery && suggestions.length === 0 && (
-                    <div className="p-6 text-center text-gray-500">
-                      <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                      </svg>
-                      <p className="text-sm">No suggestions found</p>
-                    </div>
-                  )}
-                </div>
-              )}
+                <Link to="/orders" className="group relative">
+                  <div className="absolute inset-0 bg-white/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                  <div className="relative w-12 h-12 bg-slate-800/50 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:bg-slate-700/50 transition-all">
+                    <svg className="w-6 h-6 text-slate-300 group-hover:text-white group-hover:scale-110 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                  </div>
+                </Link>
+              </div>
             </div>
 
-            <div className="flex items-center gap-1">
-              <Link
-                to="/account"
-                className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300 group"
-              >
-                <svg className="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span className="text-xs font-semibold">Account</span>
-              </Link>
-
-              <Link
-                to="/products"
-                className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300 group"
-              >
-                <svg className="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-                </svg>
-                <span className="text-xs font-semibold">Products</span>
-              </Link>
-
-              <Link
-                to="/cart"
-                className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300 group relative"
-              >
-                <svg className="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                </svg>
-                <span className="text-xs font-semibold">Cart</span>
-                {cartItems.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
-                    {cartItems.length}
-                  </span>
-                )}
-              </Link>
-
-              <Link
-                to="/orders"
-                className="flex flex-col items-center gap-1 px-3 py-2 rounded-lg hover:bg-white/10 transition-all duration-300 group"
-              >
-                <svg className="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span className="text-xs font-semibold">Orders</span>
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-slate-900/50 backdrop-blur-sm border-t border-slate-700/50">
-          <div className="max-w-7xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between gap-4 overflow-x-auto scrollbar-hide">
+            <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide pb-1">
               {categories.slice(1).map(category => (
                 <button
                   key={category.id}
                   onClick={() => handleCategoryClick(category.id)}
-                  className={`flex flex-col items-center gap-2 px-4 py-2 rounded-xl hover:bg-white/10 transition-all duration-300 group flex-shrink-0 ${
-                    selectedCategory === category.id ? 'bg-white/10 shadow-lg' : ''
+                  className={`group relative flex items-center gap-3 px-5 py-3 rounded-full transition-all flex-shrink-0 ${
+                    selectedCategory === category.id
+                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-white/10'
+                      : 'bg-slate-800/50 backdrop-blur-sm text-slate-300 hover:bg-slate-700/50 hover:text-white'
                   }`}
                 >
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl transition-all duration-300 ${
-                    selectedCategory === category.id 
-                      ? 'bg-gradient-to-br from-blue-500 to-purple-600 shadow-lg scale-110' 
-                      : 'bg-slate-800 group-hover:bg-slate-700 group-hover:scale-105'
-                  }`}>
-                    {category.icon}
-                  </div>
-                  <span className="text-xs font-semibold text-center whitespace-nowrap">
-                    {category.name}
-                  </span>
+                  <span className="text-xl">{category.icon}</span>
+                  <span className="text-sm font-bold whitespace-nowrap">{category.name}</span>
                 </button>
               ))}
 
-              <Link
-                to="/products"
-                className="flex flex-col items-center gap-2 px-4 py-2 rounded-xl hover:bg-white/10 transition-all duration-300 group flex-shrink-0"
-              >
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-                  <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                  </svg>
-                </div>
-                <span className="text-xs font-semibold">View All</span>
+              <Link to="/products" className="group relative flex items-center gap-3 px-5 py-3 rounded-full bg-slate-800/50 backdrop-blur-sm text-slate-300 hover:bg-slate-700/50 hover:text-white transition-all flex-shrink-0">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <span className="text-sm font-bold whitespace-nowrap">View All</span>
               </Link>
             </div>
           </div>
@@ -340,9 +310,8 @@ export default function Navbar() {
               </span>
             </h1>
             
-            <p className="text-xl md:text-2xl mb-10 text-white leading-relaxed">
-              Automatic student discounts on everything.<br/>
-              No hunting, no hassle, no expired coupons.
+            <p className="text-xl text-white/90 mb-8 leading-relaxed">
+              Tired of hunting for discount codes that don't work? Get automatic 30% student discounts on every purchase. No codes needed.
             </p>
             
             <div className="flex gap-4 mb-14">
