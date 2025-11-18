@@ -1,19 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
-import { signOut } from 'firebase/auth';
-import { auth } from '../config/firebase';
+import { useUser } from '../context/UserContext';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const { cartItems } = useCart();
+  const { user, signOut } = useUser();
   const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
   const [recentSearches, setRecentSearches] = useState([]);
-  const [user, setUser] = useState(null);
   const [showUserDropdown, setShowUserDropdown] = useState(false);
   const searchRef = useRef(null);
   const userRef = useRef(null);
@@ -33,13 +32,6 @@ export default function Navbar() {
     'Laptop', 'Headphones', 'Mouse', 'Keyboard', 'Webcam', 
     'Charger', 'Speaker', 'Tablet', 'Monitor', 'Backpack'
   ];
-
-  useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -112,15 +104,9 @@ export default function Navbar() {
   };
 
   const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      localStorage.removeItem('user');
-      setUser(null);
-      setShowUserDropdown(false);
-      navigate('/');
-    } catch (error) {
-      console.error('Logout error:', error);
-    }
+    await signOut();
+    setShowUserDropdown(false);
+    navigate('/');
   };
 
   return (
@@ -198,111 +184,126 @@ export default function Navbar() {
                       )}
 
                       <button onClick={() => handleSearch()} className="bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-full m-1.5 px-8 py-3 font-black transition-all duration-300 shadow-lg">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={3}>
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2.5}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
                       </button>
                     </div>
                   </div>
+
+                  {showSuggestions && (searchQuery.length > 0 || recentSearches.length > 0) && (
+                    <div className="absolute top-full mt-3 w-full bg-white border border-slate-200 rounded-2xl shadow-2xl overflow-hidden z-50">
+                      {searchQuery.length > 0 && suggestions.length > 0 && (
+                        <div className="p-2">
+                          <div className="px-4 py-2 text-xs font-bold text-slate-500 uppercase tracking-wider">Suggestions</div>
+                          {suggestions.map((term, index) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setSearchQuery(term);
+                                handleSearch(term);
+                              }}
+                              className="w-full text-left px-4 py-3 hover:bg-slate-50 text-slate-900 transition-colors flex items-center gap-3 rounded-xl"
+                            >
+                              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                              </svg>
+                              <span className="text-sm font-semibold">{term}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {recentSearches.length > 0 && (
+                        <div className="p-2 border-t border-slate-200">
+                          <div className="flex justify-between items-center px-4 py-2">
+                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Recent</span>
+                            <button
+                              onClick={clearRecentSearches}
+                              className="text-xs text-red-500 hover:text-red-600 font-semibold"
+                            >
+                              Clear
+                            </button>
+                          </div>
+                          {recentSearches.map((term, index) => (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                setSearchQuery(term);
+                                handleSearch(term);
+                              }}
+                              className="w-full text-left px-4 py-3 hover:bg-slate-50 text-slate-700 transition-colors flex items-center gap-3 rounded-xl"
+                            >
+                              <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                              </svg>
+                              <span className="text-sm font-semibold">{term}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-
-                {showSuggestions && (searchQuery || recentSearches.length > 0) && (
-                  <div className="absolute top-full mt-3 w-full bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-fadeIn z-50">
-                    {recentSearches.length > 0 && !searchQuery && (
-                      <div className="p-5 border-b border-slate-100">
-                        <div className="flex items-center justify-between mb-3">
-                          <span className="text-xs font-black text-slate-600 uppercase tracking-wider">Recent</span>
-                          <button onClick={clearRecentSearches} className="text-xs text-orange-600 hover:text-orange-800 font-black">Clear</button>
-                        </div>
-                        {recentSearches.map((term, idx) => (
-                          <button key={idx} onClick={() => { setSearchQuery(term); handleSearch(term); }} className="w-full text-left px-4 py-3 hover:bg-slate-50 rounded-xl flex items-center gap-3 mb-1 group">
-                            <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-orange-100">
-                              <svg className="w-4 h-4 text-slate-500 group-hover:text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                              </svg>
-                            </div>
-                            <span className="text-slate-800 font-semibold">{term}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {searchQuery && suggestions.length > 0 && (
-                      <div className="p-5">
-                        <span className="text-xs font-black text-slate-600 uppercase tracking-wider block mb-3">Suggestions</span>
-                        {suggestions.map((term, idx) => (
-                          <button key={idx} onClick={() => { setSearchQuery(term); handleSearch(term); }} className="w-full text-left px-4 py-3 hover:bg-slate-50 rounded-xl flex items-center gap-3 mb-1 group">
-                            <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center group-hover:bg-orange-100">
-                              <svg className="w-4 h-4 text-slate-500 group-hover:text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                              </svg>
-                            </div>
-                            <span className="text-slate-800 font-semibold">{term}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-
-                    {searchQuery && suggestions.length === 0 && (
-                      <div className="p-8 text-center">
-                        <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center">
-                          <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                          </svg>
-                        </div>
-                        <p className="text-sm font-bold text-slate-500">No results</p>
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
 
               <div className="flex items-center gap-3">
                 <div ref={userRef} className="relative">
-                  <button onClick={handleAccountClick} className="group relative">
+                  <button
+                    onClick={handleAccountClick}
+                    className="group relative"
+                  >
                     <div className="absolute inset-0 bg-white/5 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
                     <div className="relative w-12 h-12 bg-slate-800/50 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:bg-slate-700/50 transition-all">
                       <svg className="w-6 h-6 text-slate-300 group-hover:text-white group-hover:scale-110 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
-                      {user?.is_student && (
-                        <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-2 border-slate-950"></span>
-                      )}
                     </div>
                   </button>
 
-                  {showUserDropdown && user && (
-                    <div className="absolute right-0 mt-2 w-72 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden z-50">
-                      <div className="p-5 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-slate-700">
-                        <p className="font-bold text-white text-lg">{user.name}</p>
-                        <p className="text-sm text-slate-400 mt-1">{user.email}</p>
+                  {user && showUserDropdown && (
+                    <div className="absolute top-full right-0 mt-3 w-72 bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden z-50">
+                      <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-5">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30">
+                            <span className="text-xl font-bold text-white">
+                              {user.full_name ? user.full_name[0].toUpperCase() : user.email[0].toUpperCase()}
+                            </span>
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-white text-sm truncate">
+                              {user.full_name || 'User'}
+                            </p>
+                            <p className="text-white/80 text-xs truncate">{user.email}</p>
+                          </div>
+                        </div>
                         {user.is_student && (
-                          <div className="mt-3 inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/30 rounded-full">
-                            <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                          <div className="mt-3 bg-white/20 backdrop-blur-sm px-3 py-2 rounded-lg border border-white/30 inline-flex items-center gap-2">
+                            <svg className="w-4 h-4 text-green-300" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-xs font-bold text-green-400">Student Member</span>
+                            <span className="text-xs font-bold text-white">Student Verified</span>
                           </div>
                         )}
                       </div>
 
-                      <div className="py-2">
+                      <div className="p-2">
                         <Link
                           to="/orders"
                           onClick={() => setShowUserDropdown(false)}
-                          className="flex items-center gap-3 px-5 py-3 hover:bg-slate-800 transition-colors text-slate-300 hover:text-white"
+                          className="w-full flex items-center gap-3 px-5 py-3 hover:bg-slate-800/50 transition-colors text-slate-200 rounded-xl"
                         >
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                          <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                           </svg>
-                          <span className="text-sm font-semibold">My Orders</span>
+                          <span className="text-sm font-semibold">Order History</span>
                         </Link>
 
                         {user.is_student && (
                           <Link
                             to="/student-discount"
                             onClick={() => setShowUserDropdown(false)}
-                            className="flex items-center gap-3 px-5 py-3 hover:bg-slate-800 transition-colors text-slate-300 hover:text-white"
+                            className="w-full flex items-center gap-3 px-5 py-3 hover:bg-slate-800/50 transition-colors text-slate-200 rounded-xl"
                           >
                             <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
                               <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3z"/>
@@ -313,7 +314,7 @@ export default function Navbar() {
 
                         <button
                           onClick={handleLogout}
-                          className="w-full flex items-center gap-3 px-5 py-3 hover:bg-red-500/10 transition-colors text-red-400"
+                          className="w-full flex items-center gap-3 px-5 py-3 hover:bg-red-500/10 transition-colors text-red-400 rounded-xl"
                         >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
