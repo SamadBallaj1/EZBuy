@@ -23,15 +23,23 @@ const Profile = () => {
     try {
       const response = await fetch(`http://localhost:3001/api/orders/user/${user.id}`);
       const data = await response.json();
-      setOrders(data);
       
-      const savings = data.reduce((sum, order) => {
-        const discount = parseFloat(order.student_discount_applied) || 0;
-        return sum + discount;
-      }, 0);
-      setTotalSavings(savings);
+      if (Array.isArray(data)) {
+        setOrders(data);
+        
+        const savings = data.reduce((sum, order) => {
+          const discount = parseFloat(order.student_discount_applied) || 0;
+          return sum + discount;
+        }, 0);
+        setTotalSavings(savings);
+      } else {
+        console.error('Orders response is not an array:', data);
+        setOrders([]);
+        setTotalSavings(0);
+      }
     } catch (error) {
-      toast.error("Failed to load orders");
+      console.error('Failed to fetch orders:', error);
+      setOrders([]);
       setTotalSavings(0);
     } finally {
       setLoading(false);
@@ -184,44 +192,23 @@ const Profile = () => {
                                 <img 
                                   src={item.image} 
                                   alt={item.name} 
-                                  className="w-20 h-20 object-cover rounded-lg border-2 border-white shadow-md"
+                                  className="w-20 h-20 object-cover rounded-lg shadow-md"
                                 />
                                 <div className="flex-1">
-                                  <h4 className="font-bold text-gray-900 text-lg">{item.name}</h4>
-                                  <p className="text-sm text-gray-600 font-semibold">Quantity: {item.quantity}</p>
-                                  <p className="text-blue-600 font-black text-lg">${(parseFloat(item.price) * item.quantity).toFixed(2)}</p>
+                                  <p className="font-bold text-gray-900">{item.name}</p>
+                                  <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
+                                  <p className="text-blue-600 font-black mt-2">${(parseFloat(item.price) * item.quantity).toFixed(2)}</p>
                                 </div>
                               </div>
                             ))}
                           </div>
 
-                          {parseFloat(order.student_discount_applied) > 0 && (
-                            <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 mb-4">
-                              <div className="flex items-center justify-between">
-                                <span className="text-green-700 font-bold flex items-center gap-2">
-                                  <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                                  </svg>
-                                  You saved with Student Discount
-                                </span>
-                                <span className="text-2xl font-black text-green-600">
-                                  ${(parseFloat(order.student_discount_applied) || 0).toFixed(2)}
-                                </span>
-                              </div>
+                          {order.shipping_address && (
+                            <div className="bg-blue-50 rounded-xl p-4 border border-blue-200">
+                              <p className="text-sm font-bold text-gray-700 mb-2">Shipping Address</p>
+                              <p className="text-gray-900 font-medium">{order.shipping_address}</p>
                             </div>
                           )}
-
-                          <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-                            <div className="flex gap-3">
-                              <svg className="w-6 h-6 text-blue-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              </svg>
-                              <div>
-                                <p className="font-bold text-blue-900 mb-1">Shipping Address</p>
-                                <p className="text-sm text-blue-800">{order.shipping_address}</p>
-                              </div>
-                            </div>
-                          </div>
                         </div>
                       </div>
                     ))}

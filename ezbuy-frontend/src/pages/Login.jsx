@@ -10,9 +10,17 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  const isStudentEmail = (email) => email.endsWith('.edu');
+
   const handleEmailLogin = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!isStudentEmail(email)) {
+      setError('Only .edu email addresses are allowed. Please use your student email.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -33,7 +41,11 @@ export default function Login() {
         setError('Failed to login. Please try again.');
       }
     } catch (err) {
-      setError(err.message);
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+        setError('Invalid email or password');
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -48,6 +60,12 @@ export default function Login() {
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
+      if (!isStudentEmail(user.email)) {
+        setError('Only .edu email addresses are allowed. Please sign in with your student Google account.');
+        setLoading(false);
+        return;
+      }
+
       const response = await fetch('http://localhost:3001/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -59,6 +77,7 @@ export default function Login() {
         localStorage.setItem('user', JSON.stringify(userData));
         window.location.href = '/';
       } else {
+        setError('Account not found. Please register first.');
         navigate('/register');
       }
     } catch (err) {
@@ -73,7 +92,7 @@ export default function Login() {
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
-          <p className="text-gray-600">Sign in to continue shopping</p>
+          <p className="text-gray-600">Sign in to your EZBuy account</p>
         </div>
 
         {error && (
@@ -82,15 +101,21 @@ export default function Login() {
           </div>
         )}
 
+        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+          <p className="text-blue-700 text-sm font-bold">
+            🎓 REQUIRED: Use your .edu email address to sign in
+          </p>
+        </div>
+
         <form onSubmit={handleEmailLogin} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Student Email (.edu)</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-              placeholder="you@example.com"
+              placeholder="you@university.edu"
               required
             />
           </div>
@@ -109,7 +134,7 @@ export default function Login() {
 
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isStudentEmail(email)}
             className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition"
           >
             {loading ? 'Signing in...' : 'Sign In'}
@@ -137,7 +162,7 @@ export default function Login() {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            Sign in with Google
+            Sign in with Google (.edu)
           </button>
         </div>
 

@@ -1,7 +1,16 @@
 import express from 'express';
-import { pool } from '../server.js';
+import pkg from 'pg';
+const { Pool } = pkg;
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const router = express.Router();
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 router.post('/register', async (req, res) => {
   try {
@@ -18,7 +27,7 @@ router.post('/register', async (req, res) => {
     }
     
     const result = await pool.query(`
-      INSERT INTO users (email, name, is_student)
+      INSERT INTO users (email, full_name, is_student)
       VALUES ($1, $2, $3)
       RETURNING *
     `, [email, name, is_student]);
@@ -47,27 +56,6 @@ router.post('/login', async (req, res) => {
   }
 });
 
-router.post('/github', async (req, res) => {
-  try {
-    const { github_id, email, name } = req.body;
-    
-    let result = await pool.query('SELECT * FROM users WHERE github_id = $1', [github_id]);
-    
-    if (result.rows.length === 0) {
-      result = await pool.query(`
-        INSERT INTO users (email, name, github_id, is_student)
-        VALUES ($1, $2, $3, $4)
-        RETURNING *
-      `, [email, name, github_id, email.endsWith('.edu')]);
-    }
-    
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Error with GitHub auth:', error);
-    res.status(500).json({ error: 'Failed to authenticate with GitHub' });
-  }
-});
-
 router.get('/user/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -81,30 +69,6 @@ router.get('/user/:id', async (req, res) => {
   } catch (error) {
     console.error('Error fetching user:', error);
     res.status(500).json({ error: 'Failed to fetch user' });
-  }
-});
-
-router.patch('/user/:id', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { name, is_student } = req.body;
-    
-    const result = await pool.query(`
-      UPDATE users 
-      SET name = COALESCE($1, name),
-          is_student = COALESCE($2, is_student)
-      WHERE id = $3
-      RETURNING *
-    `, [name, is_student, id]);
-    
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-    
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Error updating user:', error);
-    res.status(500).json({ error: 'Failed to update user' });
   }
 });
 
