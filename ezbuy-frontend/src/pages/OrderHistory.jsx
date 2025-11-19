@@ -1,16 +1,23 @@
 import { useState, useEffect } from "react";
+import { useUser } from "../context/UserContext";
+import { Link } from "react-router-dom";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useUser();
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    if (user?.id) {
+      fetchOrders();
+    } else {
+      setLoading(false);
+    }
+  }, [user]);
 
   const fetchOrders = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/orders/user/1');
+      const response = await fetch(`http://localhost:3001/api/orders/user/${user.id}`);
       const data = await response.json();
       setOrders(data);
     } catch (error) {
@@ -47,83 +54,72 @@ const OrderHistory = () => {
               />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">No Orders Yet</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">No orders yet</h2>
           <p className="text-gray-600 mb-8">
-            Start shopping to see your orders here
+            Start shopping and save with student discounts!
           </p>
-          <a
-            href="/products"
-            className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 transition-all shadow-lg"
+          <Link
+            to="/products"
+            className="inline-block bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transition-all"
           >
             Browse Products
-          </a>
+          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-6 py-12">
-      <h1 className="text-4xl font-bold mb-10 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-        Order History
-      </h1>
-
+    <div className="container mx-auto px-6 py-8">
+      <h1 className="text-3xl font-bold mb-8">Order History</h1>
+      
       <div className="space-y-6">
         {orders.map((order) => (
-          <div
-            key={order.id}
-            className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
-          >
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm opacity-90 mb-1">Order #{order.id}</p>
-                  <p className="text-xl font-bold">
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm opacity-90 mb-1">Total</p>
-                  <p className="text-2xl font-bold">${parseFloat(order.total_amount).toFixed(2)}</p>
-                </div>
+          <div key={order.id} className="bg-white rounded-2xl shadow-lg p-6">
+            <div className="flex justify-between items-start mb-4">
+              <div>
+                <p className="text-sm text-gray-500">Order #{order.order_number || order.id}</p>
+                <p className="text-sm text-gray-500">
+                  {new Date(order.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </p>
               </div>
-              
-              <div className="mt-4 text-sm">
-                <span className="opacity-90">Status: </span>
-                <span className="font-semibold capitalize">{order.status}</span>
-              </div>
+              <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                order.order_status === 'completed' || order.order_status === 'processing'
+                  ? 'bg-green-100 text-green-800'
+                  : 'bg-yellow-100 text-yellow-800'
+              }`}>
+                {order.order_status || 'Processing'}
+              </span>
             </div>
 
-            <div className="p-6">
-              <h3 className="font-semibold text-lg mb-4 text-gray-800">Order Items</h3>
-              <div className="space-y-4">
-                {order.items?.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex gap-4 pb-4 border-b border-gray-200 last:border-0"
-                  >
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-20 h-20 object-cover rounded-lg border"
+            <div className="border-t pt-4">
+              {order.items && order.items[0] && order.items.map((item, index) => (
+                <div key={index} className="flex items-center gap-4 py-2">
+                  {item.image && (
+                    <img 
+                      src={item.image} 
+                      alt={item.name} 
+                      className="w-16 h-16 object-cover rounded-lg"
                     />
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-gray-900">{item.name}</h4>
-                      <p className="text-sm text-gray-600 mt-1">Quantity: {item.quantity}</p>
-                      <p className="text-blue-600 font-semibold mt-2">
-                        ${parseFloat(item.price).toFixed(2)}
-                      </p>
-                    </div>
+                  )}
+                  <div className="flex-1">
+                    <p className="font-medium">{item.name}</p>
+                    <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
                   </div>
-                ))}
-              </div>
-
-              {order.shipping_address && (
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                  <p className="text-sm text-gray-600">Shipping Address</p>
-                  <p className="text-gray-900 font-medium mt-1">{order.shipping_address}</p>
+                  <p className="font-medium">${(item.price * item.quantity).toFixed(2)}</p>
                 </div>
-              )}
+              ))}
+            </div>
+
+            <div className="border-t pt-4 mt-4 flex justify-between items-center">
+              <span className="font-bold">Total</span>
+              <span className="text-xl font-bold text-blue-600">
+                ${parseFloat(order.total_amount).toFixed(2)}
+              </span>
             </div>
           </div>
         ))}

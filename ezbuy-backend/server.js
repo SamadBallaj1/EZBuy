@@ -11,7 +11,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const pool = new Pool({
+export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
@@ -122,7 +122,6 @@ app.post('/api/auth/register', async (req, res) => {
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email } = req.body;
-    
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     
     if (result.rows.length === 0) {
@@ -131,7 +130,6 @@ app.post('/api/auth/login', async (req, res) => {
     
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error logging in:', error);
     res.status(500).json({ error: 'Failed to log in' });
   }
 });
@@ -139,7 +137,6 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/users/email/:email', async (req, res) => {
   try {
     const { email } = req.params;
-    
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     
     if (result.rows.length === 0) {
@@ -148,17 +145,7 @@ app.get('/api/users/email/:email', async (req, res) => {
     
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error fetching user:', error);
     res.status(500).json({ error: 'Failed to fetch user' });
-  }
-});
-
-app.get('/api/categories', async (req, res) => {
-  try {
-    const result = await pool.query('SELECT * FROM categories');
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch categories' });
   }
 });
 
@@ -189,16 +176,6 @@ app.get('/api/products/bestsellers', async (req, res) => {
   }
 });
 
-app.get('/api/products/category/:categoryId', async (req, res) => {
-  try {
-    const { categoryId } = req.params;
-    const result = await pool.query('SELECT * FROM products WHERE category_id = $1', [categoryId]);
-    res.json(result.rows);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch products' });
-  }
-});
-
 app.get('/api/products/:id', async (req, res) => {
   try {
     const { id } = req.params;
@@ -214,13 +191,22 @@ app.get('/api/products/:id', async (req, res) => {
   }
 });
 
+app.get('/api/categories', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM categories ORDER BY id');
+    res.json(result.rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch categories' });
+  }
+});
+
 app.post('/api/orders', async (req, res) => {
   const client = await pool.connect();
   
   try {
     await client.query('BEGIN');
     
-    const { user_id = 1, items, total_amount, student_discount_applied = 0, shipping_address } = req.body;
+    const { user_id, items, total_amount, student_discount_applied = 0, shipping_address } = req.body;
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
     
     const orderResult = await client.query(
@@ -242,7 +228,7 @@ app.post('/api/orders', async (req, res) => {
     res.status(201).json(order);
   } catch (error) {
     await client.query('ROLLBACK');
-    console.error('Error creating order:', error);
+    console.error('Order creation failed:', error);
     res.status(500).json({ error: 'Failed to create order' });
   } finally {
     client.release();
@@ -252,10 +238,6 @@ app.post('/api/orders', async (req, res) => {
 app.get('/api/orders/user/:userId', async (req, res) => {
   try {
     const { userId } = req.params;
-    
-    if (!userId || userId === 'undefined') {
-      return res.status(400).json({ error: 'Valid user ID required' });
-    }
     
     const ordersResult = await pool.query(
       `SELECT o.*, json_agg(json_build_object('product_id', oi.product_id, 'quantity', oi.quantity, 'price', oi.price_at_purchase, 'name', p.name, 'image', p.image_url)) as items
@@ -270,55 +252,8 @@ app.get('/api/orders/user/:userId', async (req, res) => {
     
     res.json(ordersResult.rows);
   } catch (error) {
-    console.error('Error fetching orders:', error);
+    console.error('Failed to fetch orders:', error);
     res.status(500).json({ error: 'Failed to fetch orders' });
-  }
-});
-
-app.get('/api/orders', async (req, res) => {
-  try {
-    const ordersResult = await pool.query(
-      `SELECT o.*, u.email, u.full_name, 
-       json_agg(json_build_object('product_id', oi.product_id, 'quantity', oi.quantity, 'price', oi.price_at_purchase, 'name', p.name, 'image', p.image_url)) as items
-       FROM orders o
-       LEFT JOIN users u ON o.user_id = u.id
-       LEFT JOIN order_items oi ON o.id = oi.order_id
-       LEFT JOIN products p ON oi.product_id = p.id
-       GROUP BY o.id, u.email, u.full_name
-       ORDER BY o.created_at DESC`
-    );
-    
-    res.json(ordersResult.rows);
-  } catch (error) {
-    console.error('Error fetching all orders:', error);
-    res.status(500).json({ error: 'Failed to fetch all orders' });
-  }
-});
-
-app.put('/api/orders/:id/status', async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { order_status } = req.body;
-
-    const validStatuses = ['processing', 'shipped', 'delivered', 'cancelled'];
-    
-    if (!validStatuses.includes(order_status)) {
-      return res.status(400).json({ error: 'Invalid order status' });
-    }
-
-    const result = await pool.query(
-      `UPDATE orders SET order_status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`,
-      [order_status, id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Order not found' });
-    }
-
-    res.json(result.rows[0]);
-  } catch (error) {
-    console.error('Error updating order status:', error);
-    res.status(500).json({ error: 'Failed to update order status' });
   }
 });
 
@@ -327,7 +262,6 @@ app.post('/api/reset', async (req, res) => {
     await pool.query('TRUNCATE orders, order_items RESTART IDENTITY CASCADE');
     res.json({ message: 'Database reset successfully' });
   } catch (error) {
-    console.error('Error resetting database:', error);
     res.status(500).json({ error: 'Failed to reset database' });
   }
 });
@@ -335,5 +269,3 @@ app.post('/api/reset', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
-export { pool };
