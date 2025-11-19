@@ -25,10 +25,14 @@ const Profile = () => {
       const data = await response.json();
       setOrders(data);
       
-      const savings = data.reduce((sum, order) => sum + (order.student_discount_applied || 0), 0);
+      const savings = data.reduce((sum, order) => {
+        const discount = parseFloat(order.student_discount_applied) || 0;
+        return sum + discount;
+      }, 0);
       setTotalSavings(savings);
     } catch (error) {
       toast.error("Failed to load orders");
+      setTotalSavings(0);
     } finally {
       setLoading(false);
     }
@@ -98,7 +102,7 @@ const Profile = () => {
                   <div className="text-center">
                     <p className="text-sm font-bold text-gray-700 mb-2">Total Savings</p>
                     <p className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600">
-                      ${totalSavings.toFixed(2)}
+                      ${(totalSavings || 0).toFixed(2)}
                     </p>
                     <p className="text-xs font-semibold text-gray-600 mt-2">{orders.length} orders placed</p>
                   </div>
@@ -156,7 +160,7 @@ const Profile = () => {
                             </div>
                             <div className="text-right">
                               <p className="text-sm font-semibold text-white/80 mb-1">Total</p>
-                              <p className="text-2xl font-black">${order.total_amount?.toFixed(2)}</p>
+                              <p className="text-2xl font-black">${(parseFloat(order.total_amount) || 0).toFixed(2)}</p>
                             </div>
                           </div>
                           <div className="flex items-center justify-between">
@@ -185,13 +189,13 @@ const Profile = () => {
                                 <div className="flex-1">
                                   <h4 className="font-bold text-gray-900 text-lg">{item.name}</h4>
                                   <p className="text-sm text-gray-600 font-semibold">Quantity: {item.quantity}</p>
-                                  <p className="text-blue-600 font-black text-lg">${(item.price * item.quantity).toFixed(2)}</p>
+                                  <p className="text-blue-600 font-black text-lg">${(parseFloat(item.price) * item.quantity).toFixed(2)}</p>
                                 </div>
                               </div>
                             ))}
                           </div>
 
-                          {order.student_discount_applied > 0 && (
+                          {parseFloat(order.student_discount_applied) > 0 && (
                             <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4 mb-4">
                               <div className="flex items-center justify-between">
                                 <span className="text-green-700 font-bold flex items-center gap-2">
@@ -201,7 +205,7 @@ const Profile = () => {
                                   You saved with Student Discount
                                 </span>
                                 <span className="text-2xl font-black text-green-600">
-                                  ${order.student_discount_applied.toFixed(2)}
+                                  ${(parseFloat(order.student_discount_applied) || 0).toFixed(2)}
                                 </span>
                               </div>
                             </div>
