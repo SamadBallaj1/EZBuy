@@ -289,6 +289,17 @@ export default function Navbar() {
 
                       <div className="p-2">
                         <Link
+                          to="/profile"
+                          onClick={() => setShowUserDropdown(false)}
+                          className="w-full flex items-center gap-3 px-5 py-3 hover:bg-slate-800/50 transition-colors text-slate-200 rounded-xl"
+                        >
+                          <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                          </svg>
+                          <span className="text-sm font-semibold">My Profile</span>
+                        </Link>
+
+                        <Link
                           to="/orders"
                           onClick={() => setShowUserDropdown(false)}
                           className="w-full flex items-center gap-3 px-5 py-3 hover:bg-slate-800/50 transition-colors text-slate-200 rounded-xl"

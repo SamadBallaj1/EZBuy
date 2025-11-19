@@ -2,3 +2,5 @@ local/
 *.log
 *.env.local
 node_modules/
+*.env
+ezbuy-backend/.env
